@@ -12,6 +12,12 @@ source .venv/bin/activate
 
 ## Run api in dev
 python manage.py runserver
+
+## Check migrations
+docker compose exec api python manage.py showmigrations
+
+## Create admin user
+docker compose exec api python manage.py createsuperuser
 ```
 
 
