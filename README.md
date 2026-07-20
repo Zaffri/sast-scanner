@@ -1,6 +1,6 @@
 # SAST Scan project
 
-A simple automated security analysis tool. Limited to JavaScript projects (for now).
+A simple automated security analysis tool for scanning JavaScript projects.
 
 ![Diagram of system design diagram](./docs/diagram.svg)
 
@@ -13,8 +13,10 @@ source .venv/bin/activate
 ## Run api in dev
 python manage.py runserver
 
-## Check migrations
+## Migrations
 docker compose exec api python manage.py showmigrations
+docker compose exec api python manage.py makemigrations
+docker compose exec api python manage.py migrate
 
 ## Create admin user
 docker compose exec api python manage.py createsuperuser
@@ -24,4 +26,13 @@ docker compose exec object-store /garage bucket list
 docker compose exec object-store /garage bucket info pending-bucket
 ```
 
+## Todos
+- Add lifecycle policy for pending bucket to clean up zips
+- On file upload avoid file overwriting if chance of name/UUID clash (take into account race conditions)
+- Proper logging and setup Grafana (metrics, tracing etc)
 
+## Future additions
+- Support TypeScript projects
+
+## Useful resources/docs
+* Django styleguide/conventions: https://github.com/HackSoftware/Django-Styleguide

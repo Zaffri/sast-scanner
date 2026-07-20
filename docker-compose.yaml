@@ -7,6 +7,14 @@ services:
       - ./api:/usr/src/app
     ports:
       - "8000:8000"
+    environment:
+      # DEV ONLY (dummy creds)
+      - GARAGE_ACCESS_KEY=local-dev-key
+      - GARAGE_SECRET_KEY=4425f5c26c5e11581d3223904324dcb5b5d5dfb14e5e7f35e38c595424f5f1e6
+      - GARAGE_ENDPOINT_URL=http://object-store:3900
+      - GARAGE_DEFAULT_BUCKET=pending-bucket
+      - PROCESSED_BUCKET=processed-bucket
+
   object-store:
     # image: dxflrs/garage:v2.3.0
     build:

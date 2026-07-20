@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -78,6 +79,26 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}
+
+# Garage/object storage
+PENDING_BUCKET = os.getenv('GARAGE_DEFAULT_BUCKET')
+PROCESSED_BUCKET = os.getenv('PROCESSED_BUCKET')
+AWS_ACCESS_KEY_ID = os.getenv('GARAGE_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('GARAGE_SECRET_KEY')
+AWS_STORAGE_BUCKET_NAME = PENDING_BUCKET
+AWS_S3_ENDPOINT_URL = os.getenv('GARAGE_ENDPOINT_URL')
+AWS_S3_ADDRESSING_STYLE = 'path'
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'garage')
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {},
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage", 
+    },
 }
 
 
