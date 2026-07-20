@@ -18,6 +18,10 @@ docker compose exec api python manage.py showmigrations
 
 ## Create admin user
 docker compose exec api python manage.py createsuperuser
+
+## Cool garage commands
+docker compose exec object-store /garage bucket list
+docker compose exec object-store /garage bucket info pending-bucket
 ```
 
 

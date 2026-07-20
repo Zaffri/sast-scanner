@@ -13,3 +13,9 @@ __pycache__/
 *.log
 .env
 *.sqlite3
+
+# Garage object store
+object-store/meta/*
+object-store/data/*
+!object-store/meta/.gitkeep
+!object-store/data/.gitkeep

@@ -7,3 +7,24 @@ services:
       - ./api:/usr/src/app
     ports:
       - "8000:8000"
+  object-store:
+    # image: dxflrs/garage:v2.3.0
+    build:
+      context: ./object-store
+    container_name: object-store
+    restart: unless-stopped
+    ports:
+      - "3900:3900" # S3 API
+      - "3902:3902" # S3 Web
+      - "3903:3903" # Admin API
+    volumes:
+      - ./object-store/garage.toml:/etc/garage.toml:ro
+      - ./object-store/meta:/var/lib/garage/meta
+      - ./object-store/data:/var/lib/garage/data
+    environment:
+      - GARAGE_CONFIG_FILE=/etc/garage.toml
+      # DEV ONLY (dummy creds)
+      - GARAGE_DEFAULT_ACCESS_KEY=local-dev-key
+      - GARAGE_DEFAULT_SECRET_KEY=4425f5c26c5e11581d3223904324dcb5b5d5dfb14e5e7f35e38c595424f5f1e6
+      - GARAGE_DEFAULT_BUCKET=pending-bucket
+      - PROCESSED_BUCKET=processed-bucket
