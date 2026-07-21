@@ -26,8 +26,28 @@ SECRET_KEY = 'django-insecure-*ug6tbwxl%(xs_$-0t0h23_8qocp43@_t6zj0$0k+j0_3i2f17
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', 'api']
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] {levelname} {name} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "INFO",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+}
 
 # Application definition
 
@@ -87,6 +107,8 @@ DJANGO_OUTBOX_PATTERN = {
     "DEFAULT_STOMP_USERNAME": "guest",
     "DEFAULT_STOMP_PASSCODE": "guest"
 }
+
+INTERNAL_API_TOKEN = os.getenv("INTERNAL_API_TOKEN", "9c248fc9-6f97-47c2-99c9-050b89b6efe2")
 
 # Garage/object storage
 PENDING_BUCKET = os.getenv('GARAGE_DEFAULT_BUCKET')
