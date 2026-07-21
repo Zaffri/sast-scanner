@@ -33,5 +33,28 @@ class FileUpload(models.Model):
     null = False
   )
 
+  scanned_at = models.DateTimeField(null = True)
+
   def __str__(self):
     return self.file_name
+  
+class ScanCheck(models.Model):
+  check_name = models.CharField(
+    max_length = 75,
+    null = False
+  )
+
+  class SeverityLevel(models.TextChoices):
+    HIGH = 'HIGH'
+    MEDIUM = 'MEDIUM'
+    LOW = 'LOW'
+
+  severity = models.CharField(
+    choices = SeverityLevel.choices,
+    null = False
+  )
+
+  upload = models.ForeignKey(FileUpload, on_delete=models.CASCADE)
+
+  def __str__(self):
+    return f"{self.upload.file_name}-{self.check_name}-{self.severity}"

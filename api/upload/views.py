@@ -1,11 +1,15 @@
 import logging
+import json
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.dateparse import parse_datetime
+from .decorators import internal_api
 
 from .forms import UploadForm
 from .storage import PendingBucketStorage
-from .service import UploadFileToStorage, StoreFileReference
+from .service import UploadFileToStorage, StoreFileReference, UpdateFileCheck
 
 UPLOAD_FAILED_MESSAGE = "Upload failed"
 
@@ -25,13 +29,13 @@ def index(request):
         try:
             UploadFileToStorage(PendingBucketStorage(), file_name, uploaded_zip)
         except Exception as e:
-            logger.error("Storage upload failed: %s", e)
+            logger.exception("Storage upload failed: %s", e)
             return HttpResponse(UPLOAD_FAILED_MESSAGE)
 
         try:
             StoreFileReference(file_name, "original_file_name123", "/" + file_name)
         except Exception as e:
-            logger.error("Storage reference update failed: %s", e)
+            logger.exception("Storage reference update failed: %s", e)
             return HttpResponse("Upload failed")
         
         return HttpResponse("Uploaded...")
@@ -69,3 +73,28 @@ def debug(request):
             "status": "error",
             "message": str(e)
         }, status=500)
+
+@csrf_exempt # INTERNAL API only
+@internal_api
+def file_upload(request):
+    if request.method == "PATCH":
+        logger.info("Update file upload: %s", request.body)
+
+        request_data = json.loads(request.body)
+        scanned_at = parse_datetime(request_data.get('scanned_at'))
+
+        # TODO: add data validation
+        try:
+            UpdateFileCheck(
+                request_data.get('id'),
+                request_data.get('status'),
+                scanned_at,
+                request_data.get('findings')
+            )
+            return JsonResponse({ "success": "ok" })
+        except Exception as e:
+            logger.exception("Failed to update upload and findings: %s", e)
+            return HttpResponseServerError("Internal error")
+
+    logger.error("Invalid request: %s", request.body)
+    return HttpResponseBadRequest("Invalid request")
