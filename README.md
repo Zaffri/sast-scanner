@@ -43,3 +43,4 @@ http://localhost:15672/queue/ (guest:guest)
 ## Useful resources/docs
 * Django styleguide/conventions: https://github.com/HackSoftware/Django-Styleguide
 * Outbox in django: https://github.com/juntossomosmais/django-outbox-pattern
+* Node RabbitMQ: https://www.rabbitmq.com/tutorials/tutorial-one-javascript

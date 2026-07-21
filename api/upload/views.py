@@ -1,3 +1,4 @@
+import logging
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -7,6 +8,8 @@ from .storage import PendingBucketStorage
 from .service import UploadFileToStorage, StoreFileReference
 
 UPLOAD_FAILED_MESSAGE = "Upload failed"
+
+logger = logging.getLogger(__name__)
 
 def index(request):
     if request.method == "POST":
@@ -22,13 +25,13 @@ def index(request):
         try:
             UploadFileToStorage(PendingBucketStorage(), file_name, uploaded_zip)
         except Exception as e:
-            print(f"Storage upload failed: {e}")
+            logger.error("Storage upload failed: %s", e)
             return HttpResponse(UPLOAD_FAILED_MESSAGE)
 
         try:
             StoreFileReference(file_name, "original_file_name123", "/" + file_name)
         except Exception as e:
-            print(f"Upload failed: {e}")
+            logger.error("Storage reference update failed: %s", e)
             return HttpResponse("Upload failed")
         
         return HttpResponse("Uploaded...")

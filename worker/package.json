@@ -1,0 +1,23 @@
+{
+  "name": "sast-scan-worker",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Zaffri/sast-scanner#readme",
+  "bugs": {
+    "url": "https://github.com/Zaffri/sast-scanner/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zaffri/sast-scanner.git"
+  },
+  "license": "ISC",
+  "author": "Steven Morrison",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "amqplib": "^2.0.1"
+  }
+}

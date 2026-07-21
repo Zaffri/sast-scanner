@@ -19,3 +19,5 @@ object-store/meta/*
 object-store/data/*
 !object-store/meta/.gitkeep
 !object-store/data/.gitkeep
+
+node_modules

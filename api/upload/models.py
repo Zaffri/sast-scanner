@@ -8,7 +8,7 @@ class FileUpload(models.Model):
     PENDING = 'PENDING'
     PROCESSING = 'PROCESSING'
     PASSED = 'PASSED'
-    FAILED = 'FAILED'
+    REJECTED = 'REJECTED'
     ERROR = 'ERROR'
   
   file_name = models.CharField(
