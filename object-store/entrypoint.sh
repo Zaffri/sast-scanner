@@ -5,7 +5,6 @@ ACCESS_KEY="${GARAGE_DEFAULT_ACCESS_KEY:-default-key}"
 BUCKET_TWO="${PROCESSED_BUCKET:-bucket-two}"
 
 echo "Starting Garage entry script"
-# /garage server --single-node &
 /garage server --single-node --default-bucket &
 GARAGE_PID=$!
 
@@ -34,12 +33,9 @@ fi
 
 
 echo "Creating additional buckets: $BUCKET_TWO"
-# /garage bucket create "$BUCKET_ONE" || true
 /garage bucket create "$BUCKET_TWO" || true
 
 echo "Granting permissions"
-# /garage bucket allow "$BUCKET_ONE" --key "$KEY_NAME" --read --write
-# /garage bucket allow "$BUCKET_TWO" --key "$KEY_NAME" --read --write
 /garage bucket allow "$BUCKET_TWO" --key "${ACCESS_KEY}" --read --write || true
 
 echo "Garage init complete"

@@ -24,15 +24,22 @@ docker compose exec api python manage.py createsuperuser
 ## Cool garage commands
 docker compose exec object-store /garage bucket list
 docker compose exec object-store /garage bucket info pending-bucket
+
+## RabbitMQ management UI
+http://localhost:15672/queue/ (guest:guest)
 ```
 
 ## Todos
+- Publish message only on create? (not update too) - https://github.com/juntossomosmais/django-outbox-pattern#publish-message-via-outbox
+- Linter
 - Add lifecycle policy for pending bucket to clean up zips
 - On file upload avoid file overwriting if chance of name/UUID clash (take into account race conditions)
 - Proper logging and setup Grafana (metrics, tracing etc)
+- Add visibility/monitoring for outbox relay and workers
 
 ## Future additions
 - Support TypeScript projects
 
 ## Useful resources/docs
 * Django styleguide/conventions: https://github.com/HackSoftware/Django-Styleguide
+* Outbox in django: https://github.com/juntossomosmais/django-outbox-pattern

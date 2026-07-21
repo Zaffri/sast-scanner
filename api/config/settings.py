@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'upload'
+    'upload',
+    'django_outbox_pattern'
 ]
 
 MIDDLEWARE = [
@@ -79,6 +80,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}
+
+DJANGO_OUTBOX_PATTERN = {
+    "DEFAULT_STOMP_HOST_AND_PORTS": [("rabbitmq", 61613)],
+    "DEFAULT_STOMP_USERNAME": "guest",
+    "DEFAULT_STOMP_PASSCODE": "guest"
 }
 
 # Garage/object storage

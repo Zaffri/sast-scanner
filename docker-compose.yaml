@@ -16,7 +16,6 @@ services:
       - PROCESSED_BUCKET=processed-bucket
 
   object-store:
-    # image: dxflrs/garage:v2.3.0
     build:
       context: ./object-store
     container_name: object-store
@@ -36,3 +35,20 @@ services:
       - GARAGE_DEFAULT_SECRET_KEY=4425f5c26c5e11581d3223904324dcb5b5d5dfb14e5e7f35e38c595424f5f1e6
       - GARAGE_DEFAULT_BUCKET=pending-bucket
       - PROCESSED_BUCKET=processed-bucket
+
+  rabbitmq:
+    image: rabbitmq:4.3.0-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "15672:15672" # management UI
+    volumes:
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+    restart: on-failure
+    environment:
+      - 'RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbitmq_management path_prefix "/queue"'
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_port_connectivity"]
+      interval: 4s
+      timeout: 5s
+      retries: 3
+      start_period: 5s

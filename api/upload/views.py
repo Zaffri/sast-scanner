@@ -3,37 +3,35 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 from .forms import UploadForm
-from .storage import PendingBucketStorage, ProcessedBucketStorage
-from .models import FileUpload
+from .storage import PendingBucketStorage
+from .service import UploadFileToStorage, StoreFileReference
+
+UPLOAD_FAILED_MESSAGE = "Upload failed"
 
 def index(request):
     if request.method == "POST":
         form = UploadForm(request.POST, request.FILES)
 
-        if form.is_valid():
-            # TODO: validation on file name - should be uuid (could be idempotency-key)
-            file_name = "file_name_01.zip"
-            uploaded_zip = request.FILES.get('file_upload')
-
-            # TODO: look into avoiding over writing files with same name - unique ID and no overwrite, prevent race conditions
-            pending_bucket = PendingBucketStorage()
-            pending_bucket.save(file_name, uploaded_zip)
-
-            # TODO: tidy error handling (specific errors) and atomic transaction for outbox message
-            try:
-                new_upload = FileUpload(
-                    file_name = file_name,
-                    original_file_name = "original_file_name123",
-                    s3_path = "/" + file_name
-                )
-                new_upload.save()
-
-                return HttpResponse("Uploaded...")
-            except Exception as e:
-                print(f"Upload failed: {e}")
-                return HttpResponse("Upload failed")
-        else:
+        if form.is_valid() == False:
             return render(request, "upload.html", { "form": form })
+        
+        # TODO: validation on file name - should be uuid (could be idempotency-key)
+        file_name = "file_name_01.zip"
+        uploaded_zip = request.FILES.get('file_upload')
+
+        try:
+            UploadFileToStorage(PendingBucketStorage(), file_name, uploaded_zip)
+        except Exception as e:
+            print(f"Storage upload failed: {e}")
+            return HttpResponse(UPLOAD_FAILED_MESSAGE)
+
+        try:
+            StoreFileReference(file_name, "original_file_name123", "/" + file_name)
+        except Exception as e:
+            print(f"Upload failed: {e}")
+            return HttpResponse("Upload failed")
+        
+        return HttpResponse("Uploaded...")
     
     form = UploadForm()
 
