@@ -2,7 +2,6 @@ from django.db import models
 from django_outbox_pattern.decorators import Config
 from django_outbox_pattern.decorators import publish
 
-@publish([Config(destination="/queue/pending_uploads")])
 class FileUpload(models.Model):
   class UploadStatus(models.TextChoices):
     PENDING = 'PENDING'

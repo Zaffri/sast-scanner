@@ -30,9 +30,8 @@ http://localhost:15672/queue/ (guest:guest)
 ```
 
 ## Todos
-- Publish message only on create? (not update too) - https://github.com/juntossomosmais/django-outbox-pattern#publish-message-via-outbox
 - Linter
-- Add lifecycle policy for pending bucket to clean up zips
+- Add lifecycle policy for pending bucket to clean up zips. Also move to processed bucket.
 - Data validation lib?
 - Capture file and line locations for a finding - atm its just identifies if check is in a project
 - On file upload avoid file overwriting if chance of name/UUID clash (take into account race conditions)
@@ -46,4 +45,5 @@ http://localhost:15672/queue/ (guest:guest)
 ## Useful resources/docs
 * Django styleguide/conventions: https://github.com/HackSoftware/Django-Styleguide
 * Outbox in django: https://github.com/juntossomosmais/django-outbox-pattern
+* Manually oublish event (as opposed to decorator): https://github.com/juntossomosmais/django-outbox-pattern#publish-message-via-outbox
 * Node RabbitMQ: https://www.rabbitmq.com/tutorials/tutorial-one-javascript

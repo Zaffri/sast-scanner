@@ -9,7 +9,7 @@ from .decorators import internal_api
 
 from .forms import UploadForm
 from .storage import PendingBucketStorage
-from .service import UploadFileToStorage, StoreFileReference, UpdateFileCheck
+from .service import UploadFileToStorage, StoreFileReference, SaveScanFindings
 
 UPLOAD_FAILED_MESSAGE = "Upload failed"
 
@@ -33,7 +33,7 @@ def index(request):
             return HttpResponse(UPLOAD_FAILED_MESSAGE)
 
         try:
-            StoreFileReference(file_name, "original_file_name123", "/" + file_name)
+            StoreFileReference(file_name, "original_file_name123", file_name)
         except Exception as e:
             logger.exception("Storage reference update failed: %s", e)
             return HttpResponse("Upload failed")
@@ -85,7 +85,7 @@ def file_upload(request):
 
         # TODO: add data validation
         try:
-            UpdateFileCheck(
+            SaveScanFindings(
                 request_data.get('id'),
                 request_data.get('status'),
                 scanned_at,
