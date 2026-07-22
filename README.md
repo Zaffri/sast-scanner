@@ -27,6 +27,10 @@ docker compose exec object-store /garage bucket info pending-bucket
 
 ## RabbitMQ management UI
 http://localhost:15672/queue/ (guest:guest)
+
+# ruff lint and formatter
+ruff check --fix .
+ruff format .
 ```
 
 ## Todos
@@ -39,7 +43,9 @@ http://localhost:15672/queue/ (guest:guest)
 - Add visibility/monitoring for outbox relay and workers
 
 ## Future additions/known issues
-- Run scan inside sandbox rather than worker
+- Add scan project cleanup code
+- Expand semgrep error handling (semgrep returns errors array) 
+- Run scan inside secure sandbox rather than worker - need to explore/research this
 - Make findings/checks configurable - they are hardcoded
 
 ## Useful resources/docs
