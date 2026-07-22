@@ -47,13 +47,20 @@ class ScanCheck(models.Model):
     HIGH = 'HIGH'
     MEDIUM = 'MEDIUM'
     LOW = 'LOW'
+    UNKNOWN = 'UNKNOWN'
 
-  severity = models.CharField(
+  impact_severity = models.CharField(
     choices = SeverityLevel.choices,
+    default = SeverityLevel.UNKNOWN,
     null = False
   )
 
   upload = models.ForeignKey(FileUpload, on_delete=models.CASCADE)
 
+  found_in_file = models.CharField(
+    max_length = 120,
+    null = False
+  )
+
   def __str__(self):
-    return f"{self.upload.file_name}-{self.check_name}-{self.severity}"
+    return f"{self.upload.file_name}-{self.check_name}-{self.impact_severity}"

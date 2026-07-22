@@ -53,8 +53,9 @@ def SaveScanFindings(id, status, scanned_at, findings):
     if len(findings) > 0:
       for finding in findings:
         ScanCheck.objects.create(
-          check_name = finding.get('name'),
-          severity = finding.get('severity'),
+          check_name = finding.get('check_name'),
+          impact_severity = finding.get('impact_severity'),
+          found_in_file = finding.get('found_in_file'),
           upload = file_upload
         )
   except Exception as e:
