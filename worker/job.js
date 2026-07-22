@@ -3,7 +3,7 @@ const { mkdir } = require('fs/promises');
 const { tmpdir } = require('os');
 const path = require('path');
 const { readFromStorage, extractZipFiles } = require('./storage');
-const { startScan } = require('./scan');
+const { startScan, formatResults } = require('./scan');
 
 const processJob = async (message, channel) => {
   const baseScanFolder = path.join(tmpdir(), 'scans');
@@ -12,27 +12,24 @@ const processJob = async (message, channel) => {
   
   try {
     const messagePayload = JSON.parse(message.content.toString('utf8'));
-    console.log(messagePayload);
 
     scanPath = path.join(baseScanFolder, `${messagePayload.id}`);
-    console.log({ scanPath });
-
     await mkdir(scanPath, { recursive: true });
 
     const zipBuffer = await readFromStorage('PENDING', messagePayload.s3_path);
     
-    // extractZipFiles(zipBuffer);
     const zip = new AdmZip(zipBuffer);
     zip.extractAllTo(scanPath);
 
-    // TODO: remove mock results and scan these
-    startScan(scanPath);
-    const result = mockResults();
+    console.log('Starting semgrep scan...');
+    const rawResults = startScan(scanPath);
+    const resultSummary = formatResults(messagePayload.id, rawResults, scanPath);
 
-    if (result.status === 'ERROR') throw new Error('Mock error');
+    const decision = resultSummary.mediumImpactCount > 0 || resultSummary.highImpactCount > 0 ?
+      'REJECTED' :
+      'PASSED';
 
-    // TODO: handle pass/fail (summarise findings)
-    await updateFileUpload(messagePayload.id, result);
+    await updateFileUpload(messagePayload.id, resultSummary.findings, decision);
   
     console.log('Job successfully finished');
     channel.ack(message);
@@ -47,28 +44,7 @@ const processJob = async (message, channel) => {
   }
 };
 
-// TODO: temp only until adding AST parser
-const mockResults = () => {
-  const result = Math.random() * 100;
-
-  if (result < 50) return {
-    status: 'PASSED',
-    findings: [
-      { name: 'CHECK_TWO', severity: 'LOW' }
-    ]
-  };
- 
-  if (result < 85) return {
-    status: 'REJECTED',
-    findings: [
-      { name: 'CHECK_ONE', severity: 'HIGH' },
-      { name: 'CHECK_THREE', severity: 'MEDIUM' },
-    ]
-  };
-  return { status: 'ERROR', findings: [] };
-};
-
-const updateFileUpload = async (id, result) => {
+const updateFileUpload = async (id, findings, decision) => {
   // TODO: move to envars
   try {
     const response = await fetch('http://api:8000/upload/', {
@@ -76,8 +52,8 @@ const updateFileUpload = async (id, result) => {
       body: JSON.stringify({
         id,
         // TODO: mock/hardcoded for now
-        findings: result.findings,
-        status: result.status,
+        findings: findings,
+        status: decision,
         scanned_at: new Date()
       }),
       headers: {
