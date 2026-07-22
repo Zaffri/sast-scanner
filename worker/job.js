@@ -2,7 +2,7 @@ const AdmZip = require('adm-zip');
 const { mkdir } = require('fs/promises');
 const { tmpdir } = require('os');
 const path = require('path');
-const { readFromStorage, extractZipFiles } = require('./storage');
+const { readFromStorage } = require('./storage');
 const { startScan, formatResults } = require('./scan');
 
 const processJob = async (message, channel) => {

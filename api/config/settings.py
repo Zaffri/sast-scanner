@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*ug6tbwxl%(xs_$-0t0h23_8qocp43@_t6zj0$0k+j0_3i2f17'
+SECRET_KEY = "django-insecure-*ug6tbwxl%(xs_$-0t0h23_8qocp43@_t6zj0$0k+j0_3i2f17"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'api']
+ALLOWED_HOSTS = ["localhost", "api"]
 
 LOGGING = {
     "version": 1,
@@ -52,73 +52,75 @@ LOGGING = {
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'upload',
-    'django_outbox_pattern'
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "upload",
+    "django_outbox_pattern",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = "config.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
 DJANGO_OUTBOX_PATTERN = {
     "DEFAULT_STOMP_HOST_AND_PORTS": [("rabbitmq", 61613)],
     "DEFAULT_STOMP_USERNAME": "guest",
-    "DEFAULT_STOMP_PASSCODE": "guest"
+    "DEFAULT_STOMP_PASSCODE": "guest",
 }
 
-INTERNAL_API_TOKEN = os.getenv("INTERNAL_API_TOKEN", "9c248fc9-6f97-47c2-99c9-050b89b6efe2")
+INTERNAL_API_TOKEN = os.getenv(
+    "INTERNAL_API_TOKEN", "9c248fc9-6f97-47c2-99c9-050b89b6efe2"
+)
 
 # Garage/object storage
-PENDING_BUCKET = os.getenv('GARAGE_DEFAULT_BUCKET')
-PROCESSED_BUCKET = os.getenv('PROCESSED_BUCKET')
-AWS_ACCESS_KEY_ID = os.getenv('GARAGE_ACCESS_KEY')
-AWS_SECRET_ACCESS_KEY = os.getenv('GARAGE_SECRET_KEY')
+PENDING_BUCKET = os.getenv("GARAGE_DEFAULT_BUCKET")
+PROCESSED_BUCKET = os.getenv("PROCESSED_BUCKET")
+AWS_ACCESS_KEY_ID = os.getenv("GARAGE_ACCESS_KEY")
+AWS_SECRET_ACCESS_KEY = os.getenv("GARAGE_SECRET_KEY")
 AWS_STORAGE_BUCKET_NAME = PENDING_BUCKET
-AWS_S3_ENDPOINT_URL = os.getenv('GARAGE_ENDPOINT_URL')
-AWS_S3_ADDRESSING_STYLE = 'path'
-AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'garage')
+AWS_S3_ENDPOINT_URL = os.getenv("GARAGE_ENDPOINT_URL")
+AWS_S3_ADDRESSING_STYLE = "path"
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "garage")
 
 STORAGES = {
     "default": {
@@ -126,7 +128,7 @@ STORAGES = {
         "OPTIONS": {},
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage", 
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
@@ -136,16 +138,16 @@ STORAGES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -153,9 +155,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -165,4 +167,4 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
