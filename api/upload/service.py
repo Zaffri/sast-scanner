@@ -1,6 +1,10 @@
+import logging
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django_outbox_pattern.models import Published
 from .models import FileUpload, ScanCheck
+
+logger = logging.getLogger(__name__)
 
 # TODO: look into avoiding over writing files with same name - unique ID and no overwrite, prevent race conditions
 def UploadFileToStorage(bucket, full_path, file):
@@ -11,7 +15,7 @@ def UploadFileToStorage(bucket, full_path, file):
     raise e
 
 # TODO: tidy error handling (specific errors)
-@transaction.atomic # for outbox pattern
+@transaction.atomic
 def StoreFileReference(file_name, original_file_name, path):
   try:
     new_upload = FileUpload(
@@ -20,14 +24,29 @@ def StoreFileReference(file_name, original_file_name, path):
       s3_path = path
     )
     new_upload.save()
+
+    # avoid publish decorate to only fire on insert (better control)
+    Published.objects.create(
+        destination="/queue/pending_uploads",
+        body={
+          "id": new_upload.id,
+          "file_name": new_upload.file_name,
+          "original_file_name": new_upload.original_file_name,
+          "s3_path": new_upload.s3_path,
+          "uploaded_at": str(new_upload.uploaded_at),
+          "status": new_upload.status,
+          "scanned_at": str(new_upload.scanned_at),
+        }
+    )
   except Exception as e:
     # TODO: expand error handling with specific types etc
     raise e
 
 @transaction.atomic
-def UpdateFileCheck(id, status, scanned_at, findings):
+def SaveScanFindings(id, status, scanned_at, findings):
   try:
-    file_upload = get_object_or_404(FileUpload, id = id)
+    file_upload = get_object_or_404(FileUpload, id = id, status = 'PENDING')
+    logger.info(f"Current status: {file_upload.status}");
     file_upload.status = status
     file_upload.scanned_at = scanned_at
     file_upload.save()

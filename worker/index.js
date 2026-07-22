@@ -1,4 +1,5 @@
 const amqp = require('amqplib');
+const { readFromStorage, extractZipFiles } = require('./storage');
 
 const QUEUE_NAME = 'pending_uploads';
 
@@ -26,6 +27,10 @@ const processJob = async (message, channel) => {
   
     const messagePayload = JSON.parse(message.content.toString('utf8'));
     console.log(messagePayload);
+
+    const zipBuffer = await readFromStorage('PENDING', messagePayload.s3_path);
+    // TODO: remove mock results and scan these
+    extractZipFiles(zipBuffer);
 
     const result = mockResults();
 
