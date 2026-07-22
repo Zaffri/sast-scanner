@@ -36,31 +36,31 @@ const readFromStorage = async (status, path) => {
   }
 };
 
-const extractZipFiles = (zipBuffer) => {
-  try {
-    // TODO: need protection against zip bombs and general size limits (oom error)
-    const zip = new AdmZip(zipBuffer);
-    const numberOfFiles = zip.getEntryCount();
+// const extractZipFiles = (zipBuffer) => {
+//   try {
+//     // TODO: need protection against zip bombs and general size limits (oom error)
+//     const zip = new AdmZip(zipBuffer);
+//     const numberOfFiles = zip.getEntryCount();
 
-    if (numberOfFiles > MAX_ZIP_FILE_COUNT) {
-      throw new Error(`Number of files ${numberOfFiles} exceeded max count ${MAX_ZIP_FILE_COUNT}`);
-    }
+//     if (numberOfFiles > MAX_ZIP_FILE_COUNT) {
+//       throw new Error(`Number of files ${numberOfFiles} exceeded max count ${MAX_ZIP_FILE_COUNT}`);
+//     }
 
-    console.log('FIles found', numberOfFiles);
+//     console.log('FIles found', numberOfFiles);
   
-    const files = zip.getEntries();
+//     const files = zip.getEntries();
 
-    files.forEach(file => {
-      console.log(file.name);
-    });
+//     files.forEach(file => {
+//       console.log(file.name);
+//     });
 
-  } catch(err) {
-    // TODO: add custom error
-    throw err;
-  }
-};
+//   } catch(err) {
+//     // TODO: add custom error
+//     throw err;
+//   }
+// };
 
 module.exports = {
-  extractZipFiles,
+  // extractZipFiles,
   readFromStorage
 };

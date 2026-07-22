@@ -46,7 +46,6 @@ def StoreFileReference(file_name, original_file_name, path):
 def SaveScanFindings(id, status, scanned_at, findings):
   try:
     file_upload = get_object_or_404(FileUpload, id = id, status = 'PENDING')
-    logger.info(f"Current status: {file_upload.status}");
     file_upload.status = status
     file_upload.scanned_at = scanned_at
     file_upload.save()
