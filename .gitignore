@@ -21,3 +21,4 @@ object-store/data/*
 !object-store/data/.gitkeep
 
 node_modules
+*.zip

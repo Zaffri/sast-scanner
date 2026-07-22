@@ -78,8 +78,6 @@ def debug(request):
 @internal_api
 def file_upload(request):
     if request.method == "PATCH":
-        logger.info("Update file upload: %s", request.body)
-
         request_data = json.loads(request.body)
         scanned_at = parse_datetime(request_data.get('scanned_at'))
 
@@ -96,5 +94,5 @@ def file_upload(request):
             logger.exception("Failed to update upload and findings: %s", e)
             return HttpResponseServerError("Internal error")
 
-    logger.error("Invalid request: %s", request.body)
+    logger.error("Invalid request")
     return HttpResponseBadRequest("Invalid request")

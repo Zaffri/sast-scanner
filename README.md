@@ -38,8 +38,8 @@ http://localhost:15672/queue/ (guest:guest)
 - Proper logging and setup Grafana (metrics, tracing etc)
 - Add visibility/monitoring for outbox relay and workers
 
-## Future additions
-- Support TypeScript projects
+## Future additions/known issues
+- Run scan inside sandbox rather than worker
 - Make findings/checks configurable - they are hardcoded
 
 ## Useful resources/docs
