@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 10s
+  
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'rabbitmq'
+    scrape_interval: 2s
+    static_configs:
+      - targets: ['rabbitmq:15692']
+
+  - job_name: 'worker'
+    scrape_interval: 2s
+    static_configs:
+      - targets: ['worker:9005']

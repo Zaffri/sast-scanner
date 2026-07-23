@@ -1,14 +1,19 @@
 const AdmZip = require('adm-zip');
-const { mkdir } = require('fs/promises');
+const { mkdir, rm } = require('fs/promises');
 const { tmpdir } = require('os');
 const path = require('path');
 const { readFromStorage } = require('./storage');
 const { startScan, formatResults } = require('./scan');
 
-const processJob = async (message, channel) => {
+const QUEUE_NAME = 'pending_uploads';
+
+const processJob = async (message, channel, scanDurationHistogram) => {
+  console.log('Processing job');
+  // TODO: revisit this
+  // const endScanTimer = scanDurationHistogram.startTimer({ queue: QUEUE_NAME });
+
   const baseScanFolder = path.join(tmpdir(), 'scans');
   let scanPath;
-  console.log('Processing job');
   
   try {
     const messagePayload = JSON.parse(message.content.toString('utf8'));
@@ -38,9 +43,20 @@ const processJob = async (message, channel) => {
     // TODO: be smarter about this - certain errors we may want to requeue
     channel.nack(message, false, false);
   } finally {
-    // TODO: clean up temp scanPath - check not undefined.
-    // Could clean up whole baseScanFolder in event that old scans 
-    // floating around
+    await clearScanFolder(baseScanFolder);
+    // endScanTimer();
+  }
+};
+
+const clearScanFolder = async (baseScanFolder) => {
+  try {
+    // delete whole baseScanFolder folder (its recreated) - clear any previous floating uploads
+    await rm(baseScanFolder, { 
+      recursive: true, 
+      force: true
+    });
+  } catch(err) {
+    console.error('Failed to clear scan folder', err);
   }
 };
 
@@ -69,5 +85,6 @@ const updateFileUpload = async (id, findings, decision) => {
 };
 
 module.exports = {
-  processJob
+  processJob,
+  QUEUE_NAME
 };

@@ -31,10 +31,19 @@ http://localhost:15672/queue/ (guest:guest)
 # ruff lint and formatter
 ruff check --fix .
 ruff format .
+
+# Grafana Dashboards
+1. build dashboards in grafana
+2. export -> as code -> download button
+3. download to ./monitoring/json
+
+# Prometheus 
+http://localhost:9090/targets
+
 ```
 
 ## Todos
-- Linter
+- Add idempotency check and unique file names
 - Add lifecycle policy for pending bucket to clean up zips. Also move to processed bucket.
 - Data validation lib?
 - Capture file and line locations for a finding - atm its just identifies if check is in a project
@@ -44,8 +53,14 @@ ruff format .
 
 ## Future additions/known issues
 - Add scan project cleanup code
-- Expand semgrep error handling (semgrep returns errors array) 
-- Run scan inside secure sandbox rather than worker - need to explore/research this
+- Replace console.log with more robust solution (pino logger?)
+- Improve logging with tracing/correlation etc
+- Expand securitysemgrep error handling (semgrep returns errors array) 
+- Improve security checks:
+  - Run scan inside secure sandbox rather than worker - need to explore/research this
+  - ZIP path traversal
+  - Symbolic link concerns?
+- Expand observability e.g. add average scan times to grafana 
 - Make findings/checks configurable - they are hardcoded
 
 ## Useful resources/docs
