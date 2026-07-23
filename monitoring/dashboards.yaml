@@ -1,0 +1,10 @@
+apiVersion: 1
+
+providers:
+  - name: 'Default Provider'
+    orgId: 1
+    folder: 'RabbitMQ'
+    type: file
+    disableDeletion: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/json

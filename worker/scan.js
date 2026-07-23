@@ -47,6 +47,7 @@ const startScan = (targetPath) => {
 
 const formatResults = (uploadId, /** @type {SemgrepReport} */ rawResults, scanPath) => {
   if (rawResults.errors.length) console.log('Semgrep errors:', rawResults.errors);
+  // console.log(JSON.stringify(rawResults))
   
   if (!rawResults.results) {
     console.log('No semgrep results');
@@ -73,16 +74,43 @@ const formatResults = (uploadId, /** @type {SemgrepReport} */ rawResults, scanPa
     if (impact === 'MEDIUM') acc.mediumImpactCount += 1;
     if (impact === 'LOW') acc.lowImpactCount += 1;
 
+    const impactSeverity = finding.extra.metadata?.impact ?? 'UNKNOWN';
+
+    logVulnerability(uploadId, finding.check_id, impactSeverity);
+
     acc.findings.push({
       upload_id: uploadId,
       check_name: finding.check_id,
-      impact_severity: finding.extra.metadata?.impact ?? 'UNKNOWN',
+      impact_severity: impactSeverity,
       found_in_file: finding.path.replace(scanPath, '')
       // TODO: add line start/end
     });
     
     return acc;
   }, resultsSummary);
+};
+
+const logVulnerability = (uploadId, checkId, impactSeverity) => {
+  const logObj = {
+    event: 'vulnerability_found',
+    upload_id: uploadId,
+    check_id: formatCheckName(checkId),
+    impact_severity: impactSeverity
+  };
+
+  console.log(JSON.stringify(logObj));
+};
+
+const formatCheckName = (checkId) => {
+  const friendlyNameMapping = {
+    'javascript.browser.security.eval-detected.eval-detected': 'Unsafe use of eval()',
+    'javascript.express.security.injection.raw-html-format.raw-html-format': 'Raw HTML injection',
+    'javascript.express.security.audit.xss.direct-response-write.direct-response-write': 'Direct response write (potential XSS)',
+    'javascript.lang.security.audit.md5-used-as-password.md5-used-as-password': 'Weak hashing algorithm (MD5) used for passwords',
+    'javascript.express.security.audit.express-check-csurf-middleware-usage.express-check-csurf-middleware-usage': 'Missing CSRF protection middleware'
+  };
+
+  return friendlyNameMapping[checkId] ?? checkId;
 };
 
 module.exports = { startScan, formatResults };
