@@ -19,11 +19,11 @@ _(Grafana dashboard showing security data: top 5 vulnerabilities found and impac
 ## Features
 
 * File upload: users can upload their projects in ZIP format which are stored in S3 like storage (Garage). The frontend is currently very simple (see future additions).
-* Asynchronous scan jobs: works pick up pending scans from a queue to scan them in the background at their own pace.
+* Asynchronous scan jobs: workers pick up pending scans from a queue to scan them in the background at their own pace.
 * Security scanning: workers unzip the projects and use Semgrep to identify findings.
-* Persistence and observability: findings are stored in DB and Grafana dashboards are used for simple operation metrics and security insights.
+* Persistence and observability: findings are stored in DB. Grafana dashboards are used for simple operation metrics and security insights. Prometheus and Loki are used to forward logs and expose metrics to Grafana.
 
-_Note: this project is still in development. The current features are limited, see feature list below as well as Future additions/known issues headings._
+_Note: this project is still in development. The current features are limited, see Future additions/known issues headings below._
 
 ## System design & stack
 
@@ -32,21 +32,21 @@ _High level diagram containing general components and system design._
 ![Diagram of system design diagram](./docs/diagram.svg)
 
 ### API
-The main API is written in Python, specifically it is Django based. It allowed me to get off the ground quickly and felt like a 'batteries included' experience. I also got some practise with Python which was a plus. There was also some great django packages available such as one that I used for the outbox pattern, it was super easy to implement.
+The main API is written in Python, specifically it is Django based. It allowed me to get off the ground quickly. It felt like a 'batteries included' experience. I also got some practise with Python which was a plus. There was also some great django packages available such as `django-outbox-pattern` that I used for the outbox pattern, it was super easy to implement.
 
 ### Workers & Scanning
 
-The workers are Node.js based. To be honest the decision behind this was that originally I was going to focus purely on JS/TS projects and use JS abstract syntax tree (AST) to identify potential issues. So Node.js based was an obvious choice for my original plan. However, while developing I decided to use an out the box solution for scanning, one that would battle-tested and could support different projects not just JS. 
+The workers are Node.js based. To be honest the decision behind this was that originally I was going to focus purely on JS/TS projects and use the AST to identify potential issues. So Node.js was an obvious choice for my original plan. However, while developing I decided to use an out the box solution for scanning, one that would battle-tested and could support different projects not just JS. Because of that I went with Semgrep.
 
-Because of that I went with Semgrep. In the future I'd like to add additional security steps to compliment semgrep, hoping leading to better findings. So technically the worker does not need to be Node.js based anymore, and could easily be changed. Maybe if I had a specific custom JS AST step I could utilise JS for that step.
+In the future I'd like to add additional security steps/checks to compliment semgrep, hoping to improve findings. So technically the worker does not need to be Node.js based anymore, it could easily be changed. My message broken choice allows me to make the workers tech agnostic, so if I needed a specific langauge or tool for step then the door is open.
 
 ### Message broker
 
-I went with RabbitMQ as the choice here because its popular has good support, its more than just a simple queue (can support more complex needs for this project in future), and allows me to have workers/consumers in different technologies/languages if needed. It's also quite fast to get up and running, no messing about with tons of configuration.
+I went with RabbitMQ as the choice here because its popular, has good support, its more than just a simple queue (beneficial for the future), and it allows me to have workers/consumers in different technologies/languages if needed. It's also quite fast to get up and running, no messing about with tons of configuration.
 
 ### Object storage
 
-I wanted to be able to store the zip files easily and also run the store inside a container for local development purposes. Theres a few solutions out here to achieve that, I chose Garage because its open source and is S3 compatible - means we can use any S3 compitable store in production, it doesn't need to be Garage. It also seemed to be actively maintained compared to some of the other solutions which are now archived.
+I wanted to be able to store the zip files easily and also run the store inside a container for local development purposes. Theres a few solutions out here to achieve that, I chose Garage because its open source and is S3 compatible - means we can use any S3 compitable store in production i.e. it doesn't need to be Garage. It also seemed to be actively maintained compared to some of the other solutions which are now archived.
 
 ## Getting started
 
@@ -137,13 +137,13 @@ If you make changes to the Dockerfiles you may need to rebuild your containers `
 
 ### Saving Dashboards
 
-When creating a dashboard in Grafana it won't persist on container stop/start. TO persist you can export the dashboard as code and save into this repo under the following directory `./monitoring/json`.
+When creating a dashboard in Grafana it won't persist on container stop/start. To persist you can export the dashboard as code and save into this repo under the following directory `./monitoring/json`.
 
 Note: sometimes if you restart and try to re-edit the dashboard the UI won't let you. If this occurs you can edit from the file. Or you could backup the file then re-import it. Not ideal, but I haven't found an easier way around it yet.
 
 ### Linter & formatting
 
-Currently there is only a linter/formatter setup for the Python API. Here are some useful commands on how to get started with it
+Currently there is only a linter/formatter for the Python API. Here are some useful commands on how to get started with it
 
 ```bash
 # identify lint issues but don't apply fix
@@ -154,8 +154,7 @@ ruff check --fix .
 ruff format .
 ```
 
-Ruff can be configured with specific rules but I've just left with default settings as they seemed sensible to start off with.
-
+Ruff can be configured with specific rules but I've just left it with default settings as they seemed sensible to start off with.
 
 ## Todos
 Tasks next in line before i move to `Future additions/known issues`.
@@ -165,13 +164,13 @@ Tasks next in line before i move to `Future additions/known issues`.
 - Data validation lib?
 - Capture line locations for a finding - atm its just identifies if check is in a project and the file its present in
 - On file upload avoid file overwriting if chance of name/UUID clash (take into account race conditions)
-- Improve error handling incl. DQL delayed retries
+- Improve error handling incl. DLQ delayed retries
 
 ## Future additions/known issues
 - Add scan project cleanup code
 - Replace console.log with more robust solution (pino logger?)
 - Improve logging with tracing/correlation etc
-- Expand securitysemgrep error handling (semgrep returns errors array) 
+- Expand semgrep error handling (semgrep returns errors array) 
 - Improve security checks:
   - Run scan inside secure sandbox rather than worker - need to explore/research this
   - ZIP path traversal
