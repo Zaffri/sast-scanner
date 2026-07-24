@@ -25,8 +25,10 @@ const start = async() => {
   const channel = await connection.createChannel();
   await channel.assertQueue(QUEUE_NAME, { durable: true });
 
-  channel.consume(QUEUE_NAME, (message) => {
-    processJob(message, channel, scanDurationHistogram);
+  channel.prefetch(1);
+
+  channel.consume(QUEUE_NAME, async (message) => {
+    await processJob(message, channel, scanDurationHistogram);
   }, { noAck: false });
 };
 

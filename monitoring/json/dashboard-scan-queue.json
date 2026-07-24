@@ -524,7 +524,7 @@
       "hideTimepicker": false,
       "fiscalYearStartMonth": 0
     },
-    "title": "File Upload Scans",
+    "title": "Queue metrics",
     "variables": [],
     "preferences": {
       "layout": {
