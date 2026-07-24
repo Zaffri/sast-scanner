@@ -37,13 +37,14 @@ const processJob = async (message, channel, scanDurationHistogram) => {
     await updateFileUpload(messagePayload.id, resultSummary.findings, decision);
   
     console.log('Job successfully finished');
+    await clearScanFolder(baseScanFolder);
     channel.ack(message);
   } catch(err) {
-    console.error("Unxpected worker error:", err);
+    console.error("Unexpected worker error:", err);
+    await clearScanFolder(baseScanFolder);
     // TODO: be smarter about this - certain errors we may want to requeue
     channel.nack(message, false, false);
   } finally {
-    await clearScanFolder(baseScanFolder);
     // endScanTimer();
   }
 };

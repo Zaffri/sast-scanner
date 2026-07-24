@@ -1,5 +1,6 @@
 import logging
 import json
+import uuid
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
@@ -26,7 +27,8 @@ def index(request):
         uploaded_zip = request.FILES.get("file_upload")
 
         original_file_name = uploaded_zip.name
-        s3_file_name = "file_name_01_random_uuid.zip"
+        # TODO: get UUID from client (idempotency key)
+        s3_file_name = str(uuid.uuid4()) + ".zip"
 
         try:
             # TODO: validation on file name - should be uuid (could be idempotency-key)

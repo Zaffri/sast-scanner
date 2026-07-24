@@ -60,6 +60,9 @@ services:
     build:
       context: ./worker
     container_name: worker
+    # deploy:
+    #   mode: replicated
+    #   replicas: 2
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -73,10 +76,6 @@ services:
       - INTERNAL_API_TOKEN=development-1234
     ports:
       - "9005:9005" # metrics server for prometheus
-    # logging:
-    #   driver: "loki"
-    #   options:
-    #     loki-url: "http://loki:3100/loki/api/v1/push"
     develop:
       watch:
         - action: sync+restart
