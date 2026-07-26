@@ -1,17 +1,19 @@
 import { Link } from 'react-router'
+import PageHeader from '../components/PageHeader'
 
 function UploadList() {
   return (
     <>
-      <div className="flex items-center justify-between w-full py-4">
-        <h2 className="text-xl font-bold">Your uploads</h2>
-
-        <Link to="/upload">
-          <button type="button" className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-700 transition-colors">
-            New upload
-          </button>
-        </Link>
-      </div>
+      <PageHeader
+        title='Your Scans'
+        button={
+          <Link to="/upload/new">
+            <button type="button" className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-700 transition-colors">
+              New upload
+            </button>
+          </Link>
+        }
+      />
 
       <div className="h-full rounded-xl flex items-center justify-center">
 
@@ -35,7 +37,9 @@ function UploadList() {
                 </td>
                 <td className="py-4 px-6 text-right font-mono text-gray-600">142</td>
                 <td className="py-4 px-6 text-right font-mono text-gray-600">
-                  View
+                  <Link to="/upload/1">
+                    View
+                  </Link>
                 </td>
               </tr>
             </tbody>

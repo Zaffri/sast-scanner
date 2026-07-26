@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router'
+import { Outlet, Link } from 'react-router'
 
 function App() {
   return (
@@ -8,7 +8,9 @@ function App() {
           <span className="text-xl font-bold text-gray-900">SAST Scan</span>
 
           <nav>
-            <a href="#" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">Uploads</a>
+            <Link to="/">
+              Uploads
+            </Link>
           </nav>
         </div>
 
@@ -17,7 +19,7 @@ function App() {
         </button>
       </header>
 
-      <main className="flex-1 p-6 md:p-10">
+      <main className="max-w-7xl w-full mx-auto flex-1 p-6">
         <Outlet />
       </main>
     </div>
