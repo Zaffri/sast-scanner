@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 def internal_api(endpoint_callback):
     @wraps(endpoint_callback)
-    def internal_check(request, *args, **kwargs):
+    def internal_check(self, request, *args, **kwargs):
         api_token = request.headers.get("X-Internal-Api-Token")
 
         if not api_token:
@@ -19,6 +19,6 @@ def internal_api(endpoint_callback):
             logger.warning("Provided internal API token but it does not match")
             return HttpResponseForbidden("Invalid request")
 
-        return endpoint_callback(request, *args, **kwargs)
+        return endpoint_callback(self, request, *args, **kwargs)
 
     return internal_check

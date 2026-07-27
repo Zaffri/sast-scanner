@@ -1,11 +1,11 @@
 import logging
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import ValidationError
 from django_outbox_pattern.models import Published
 from .models import FileUpload, ScanCheck
 
 logger = logging.getLogger(__name__)
-
 
 # TODO: look into avoiding over writing files with same name - unique ID and no overwrite, prevent race conditions
 def UploadFileToStorage(bucket, full_path, file):
@@ -15,13 +15,13 @@ def UploadFileToStorage(bucket, full_path, file):
         # TODO: expand error handling with specific types etc
         raise e
 
-
-# TODO: tidy error handling (specific errors)
 @transaction.atomic
-def StoreFileReference(file_name, original_file_name, path):
+def StoreFileReference(data):
     try:
         new_upload = FileUpload(
-            file_name=file_name, original_file_name=original_file_name, s3_path=path
+            file_name=data['file_name'],
+            original_file_name=data['original_file_name'],
+            s3_path=data['s3_path']
         )
         new_upload.save()
 
@@ -38,8 +38,11 @@ def StoreFileReference(file_name, original_file_name, path):
                 "scanned_at": str(new_upload.scanned_at),
             },
         )
-    except Exception as e:
-        # TODO: expand error handling with specific types etc
+
+        return new_upload
+    except IntegrityError as e:
+        if "unique constraint" in str(e).lower():
+            raise ValidationError({"detail": "File upload already exists"})
         raise e
 
 
