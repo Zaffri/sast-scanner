@@ -61,7 +61,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_outbox_pattern",
     "upload",
-    "rest_framework"
+    "users",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -76,7 +77,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173", # Vite app - dev only (could conditionally add based on env...)
+    "http://localhost:5173",  # Vite app - dev only (could conditionally add based on env...)
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -100,6 +101,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    )
+}
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
@@ -141,6 +147,7 @@ STORAGES = {
     },
 }
 
+AUTH_USER_MODEL = "users.user"
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators

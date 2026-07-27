@@ -18,31 +18,38 @@ UPLOAD_FAILED_MESSAGE = "Upload failed"
 
 logger = logging.getLogger(__name__)
 
+
 class Upload(APIView):
     @parser_classes([JSONParser, MultiPartParser, FormParser])
     def post(self, request, pk=None):
         uploaded_zip = request.FILES.get("file_upload")
-    
+
         if not uploaded_zip:
-            return Response({"errors": "Missing file upload" }, status=status.HTTP_400_BAD_REQUEST)
-    
+            return Response(
+                {"errors": "Missing file upload"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
         file_valid, error_message = check_file_size(uploaded_zip)
-    
+
         if not file_valid:
-            return Response({"errors": error_message }, status=status.HTTP_400_BAD_REQUEST)
-    
+            return Response(
+                {"errors": error_message}, status=status.HTTP_400_BAD_REQUEST
+            )
+
         original_file_name = uploaded_zip.name
         # TODO: get UUID from client (idempotency key)
         s3_file_name = str(uuid.uuid4()) + ".zip"
         logger.info(f"name: {original_file_name}")
         logger.info(f"name: {s3_file_name}")
-    
-        file_upload_serializer = FileUploadSerializer(data = {
-            'file_name': s3_file_name,
-            'original_file_name': original_file_name,
-            's3_path': s3_file_name,
-        })
-    
+
+        file_upload_serializer = FileUploadSerializer(
+            data={
+                "file_name": s3_file_name,
+                "original_file_name": original_file_name,
+                "s3_path": s3_file_name,
+            }
+        )
+
         if file_upload_serializer.is_valid():
             try:
                 # TODO: validation on file name - should be uuid (could be idempotency-key), add to serialiser
@@ -50,11 +57,16 @@ class Upload(APIView):
             except Exception as e:
                 logger.exception("Storage upload failed: %s", e)
                 return HttpResponse(UPLOAD_FAILED_MESSAGE)
-    
+
             new_upload = StoreFileReference(file_upload_serializer.validated_data)
-            return Response(FileUploadSerializer(new_upload).data, status=status.HTTP_201_CREATED)
-    
-        return Response(file_upload_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                FileUploadSerializer(new_upload).data, status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            file_upload_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
+
 
 def debug(request):
     storage = PendingBucketStorage()
@@ -89,6 +101,7 @@ def debug(request):
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
+
 class UploadInternal(APIView):
     @parser_classes([JSONParser])
     @internal_api
@@ -107,6 +120,7 @@ class UploadInternal(APIView):
         except Exception as e:
             logger.exception("Failed to update upload and findings: %s", e)
             return HttpResponseServerError("Internal error")
+
 
 def check_file_size(value):
     # TODO: add file type check too - before .size check

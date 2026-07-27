@@ -6,8 +6,10 @@ django-cors-headers==4.9.0
 django-outbox-pattern==3.1.0
 django-storages==1.14.6
 djangorestframework==3.17.1
+djangorestframework_simplejwt==5.5.1
 docopt==0.6.2
 jmespath==1.1.0
+PyJWT==2.13.0
 python-dateutil==2.9.0.post0
 request-id-django-log==0.2.0
 ruff==0.15.22

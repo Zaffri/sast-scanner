@@ -72,14 +72,6 @@ For development: If you want to create a new migration, you can run the followin
 docker compose exec api python manage.py makemigrations
 ```
 
-### Setting up Django admin user
-
-Technically this is optional. However if you want access to the django admin panel which is useful for debugging and managing your data then you should follow this step.
-
-```bash
-docker compose exec api python manage.py createsuperuser
-```
-
 ### Running with docker compose
 
 You can start the stack up with the following
@@ -119,7 +111,7 @@ Here are some useful links for debugging in development.
 | Grafana  | http://localhost:3000/  | Contains rabbitmq metrics and security dashboard. Login is `admin:pass` |
 | Prometheus  | http://localhost:9090/targets | Query metrics in prometheus - useful for debugging |
 | RabbitMQ management  | http://localhost:15672 | UI for managing an viewing queues, exchanges etc. Login is `guest:guest` |
-| Django admin | http://localhost:8000/admin | Can show/manage data from your chosen models; zip uploads and scan findings |
+| Django admin | http://localhost:8000/admin | Can show/manage data from your chosen models; zip uploads and scan findings. Login is `admin:pass` |
 | Bucket debug | http://localhost:8000/debug | Django endpoint that returns buckets and items in JSON |
 
 Useful garage (object storage) commands if the bucket debug endpoint doesn't help. You can also look at garage help command for more.
