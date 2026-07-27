@@ -1,9 +1,9 @@
 from django.urls import path
 
-from . import views
+from .views import Upload, UploadInternal
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("debug/", views.debug, name="debug"),
-    path("upload/", views.file_upload, name="file_upload"),
+    path("", Upload.as_view(), name="index"),
+    # path("debug/", views.debug, name="debug"),
+    path("upload/", UploadInternal.as_view(), name="file_upload"),
 ]

@@ -74,7 +74,8 @@ const updateFileUpload = async (id, findings, decision) => {
         scanned_at: new Date()
       }),
       headers: {
-        'X-Internal-Api-Token': process.env.INTERNAL_API_TOKEN
+        'X-Internal-Api-Token': process.env.INTERNAL_API_TOKEN,
+        'Content-Type': 'application/json'
       }
     });
 
