@@ -7,6 +7,7 @@ from .models import FileUpload, ScanCheck
 
 logger = logging.getLogger(__name__)
 
+
 # TODO: look into avoiding over writing files with same name - unique ID and no overwrite, prevent race conditions
 def UploadFileToStorage(bucket, full_path, file):
     try:
@@ -15,13 +16,14 @@ def UploadFileToStorage(bucket, full_path, file):
         # TODO: expand error handling with specific types etc
         raise e
 
+
 @transaction.atomic
 def StoreFileReference(data):
     try:
         new_upload = FileUpload(
-            file_name=data['file_name'],
-            original_file_name=data['original_file_name'],
-            s3_path=data['s3_path']
+            file_name=data["file_name"],
+            original_file_name=data["original_file_name"],
+            s3_path=data["s3_path"],
         )
         new_upload.save()
 
