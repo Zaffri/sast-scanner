@@ -1,11 +1,10 @@
 import { API_URL } from "./config";
 
-const sendApiRequest = async (
+const sendApiRequest = async <T>(
   endpoint: string,
   method: string,
-  navigate?: Function | undefined,
   body?: Record<string, unknown> | FormData,
-): Promise<Record<string, unknown> | { error: string; redirectToLogin: boolean }> => {
+): Promise<{ data: T; redirectToLogin: boolean;  } | { error: string; redirectToLogin: boolean; }> => {
   try {
     let requestBody;
     let headers: Record<string, string> = {};
@@ -28,15 +27,16 @@ const sendApiRequest = async (
 
     if (response.status === 401) {
       // TODO: attempt refresh and req retry before login redirect
-      if (navigate) navigate('/login');
+      return { data: {} as T, redirectToLogin: true };
     }
 
-    const jsonResponse = await response.json(); 
+    const jsonResponse = await response.json();
+
+    if (response.status < 200 || response.status > 299) {
+      throw new Error(`Bad response ${response.status}`);
+    }
     
-    return {
-      data: jsonResponse,
-      error: response.status < 200 || response.status > 299
-    };
+    return { data: jsonResponse, redirectToLogin: false };
   } catch(err) {
     console.error(err);
     return { error: 'Unexpected API error occurred', redirectToLogin: false };

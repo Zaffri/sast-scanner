@@ -102,9 +102,10 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "users.authentication.HttpOnlyAuthentication",
-    )
+    "DEFAULT_AUTHENTICATION_CLASSES": ("users.authentication.HttpOnlyAuthentication",),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }
 
 # Database

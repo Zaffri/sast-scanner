@@ -18,12 +18,13 @@ def UploadFileToStorage(bucket, full_path, file):
 
 
 @transaction.atomic
-def StoreFileReference(data):
+def StoreFileReference(data, internal_s3_path, user):
     try:
         new_upload = FileUpload(
             file_name=data["file_name"],
             original_file_name=data["original_file_name"],
-            s3_path=data["s3_path"],
+            s3_path=internal_s3_path,
+            user=user,
         )
         new_upload.save()
 
@@ -38,6 +39,7 @@ def StoreFileReference(data):
                 "uploaded_at": str(new_upload.uploaded_at),
                 "status": new_upload.status,
                 "scanned_at": str(new_upload.scanned_at),
+                "user_id": user.id,
             },
         )
 
