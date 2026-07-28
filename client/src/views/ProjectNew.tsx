@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router';
 import PageHeader from '../components/PageHeader'
 import { sendApiRequest } from '../service';
+import type { Project } from '../types/shared';
 
-function UploadNew() {
+function ProjectNew() {
   const navigate = useNavigate();
   const [form, setForm] = useState<{
     file: File | undefined,
@@ -46,14 +47,18 @@ function UploadNew() {
     // payload.append('name', form.name); // TODO: add later
     payload.append('file_upload', form.file)
 
-    const response = await sendApiRequest('/', 'POST', navigate, payload);
+    const response = await sendApiRequest<Project>('/project/', 'POST', payload);
+
+    if (response.redirectToLogin) {
+      navigate('/login');
+    }
 
     if ('error' in response) {
       console.log(response);
+      return;
     }
 
-    // Redirect...
-    // setForm({ name: '', file: undefined });
+    navigate(`/project/${response.data.id}`);
   };
 
   return (
@@ -100,4 +105,4 @@ function UploadNew() {
   )
 }
 
-export default UploadNew
+export default ProjectNew

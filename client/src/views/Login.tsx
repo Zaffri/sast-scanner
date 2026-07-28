@@ -16,9 +16,9 @@ function Login() {
       username: loginForm.username,
       password: loginForm.password,
     };
-    const response = await sendApiRequest('/user/token/', 'POST', undefined, payload);
+    const response = await sendApiRequest('/user/token/', 'POST', payload);
 
-    if (response.error) {
+    if ('error' in response) {
       // TODO: show user feedback
       return;
     }

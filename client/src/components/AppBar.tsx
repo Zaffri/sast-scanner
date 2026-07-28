@@ -11,7 +11,7 @@ const AppBar = (props: Props) => {
   const logout = async () => {
     const response = await sendApiRequest('/user/token/logout/', 'POST');
 
-    if (response.error) {
+    if ('error' in response) {
       // TODO: show feedback
     }
 
@@ -26,7 +26,7 @@ const AppBar = (props: Props) => {
         <nav>
           {props.isLoggedIn && (
             <Link to="/">
-              Uploads
+              Projects
             </Link>
             )}
         </nav>

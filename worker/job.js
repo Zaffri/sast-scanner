@@ -64,7 +64,7 @@ const clearScanFolder = async (baseScanFolder) => {
 const updateFileUpload = async (id, findings, decision) => {
   // TODO: move to envars
   try {
-    const response = await fetch('http://api:8000/upload/', {
+    const response = await fetch('http://api:8000/finding/', {
       method: 'PATCH',
       body: JSON.stringify({
         id,

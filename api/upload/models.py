@@ -23,6 +23,10 @@ class FileUpload(models.Model):
 
     scanned_at = models.DateTimeField(null=True)
 
+    user = models.ForeignKey(
+        "users.User", on_delete=models.CASCADE, related_name="file_uploads"
+    )
+
     def __str__(self):
         return self.file_name
 
@@ -40,7 +44,9 @@ class ScanCheck(models.Model):
         choices=SeverityLevel.choices, default=SeverityLevel.UNKNOWN, null=False
     )
 
-    upload = models.ForeignKey(FileUpload, on_delete=models.CASCADE)
+    upload = models.ForeignKey(
+        FileUpload, on_delete=models.CASCADE, related_name="checks"
+    )
 
     found_in_file = models.CharField(max_length=120, null=False)
 
