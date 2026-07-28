@@ -1,13 +1,51 @@
+import { useState } from "react";
+import { useNavigate } from 'react-router';
+import { sendApiRequest } from "../service";
+
 function Login() {
+  const navigate = useNavigate();
+  const [loginForm, setLoginForm] = useState({
+    username: '',
+    password: '',
+  });
+
+  const login = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const payload = {
+      username: loginForm.username,
+      password: loginForm.password,
+    };
+    const response = await sendApiRequest('/user/token/', 'POST', undefined, payload);
+
+    if (response.error) {
+      // TODO: show user feedback
+      return;
+    }
+
+    navigate('/');
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setLoginForm((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   return (
     <div className="flex min-h-screen items-start justify-center py-14 sm:px-8 lg:px-8">
       <form
+        onSubmit={login}
         className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 space-y-6"
       >
         <div>
           <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
 
-          <input 
+          <input
+            onChange={handleInputChange}
             type="text"
             id="username" 
             name="username" 
@@ -19,7 +57,8 @@ function Login() {
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
 
-          <input 
+          <input
+            onChange={handleInputChange}
             type="password"
             id="password" 
             name="password" 
