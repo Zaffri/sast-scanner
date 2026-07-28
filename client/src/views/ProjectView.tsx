@@ -22,6 +22,7 @@ function ProjectView() {
 
       if (response.redirectToLogin) {
         navigate('/login');
+        return;
       }
 
       if ('error' in response) {
@@ -61,8 +62,9 @@ function ProjectView() {
     const uploadedAt = new Date(project.uploaded_at);
     const scannedAt = new Date(project.scanned_at);
     const millisecondDifference = scannedAt.getTime() - uploadedAt.getTime();
+    const seconds = millisecondDifference / 1000;
 
-    return Math.floor(millisecondDifference / 1000);
+    return `${seconds.toFixed(2)} seconds`;
   }, [project?.scanned_at, project?.uploaded_at]);
   
   if (!uploadId) return 'Invalid request!';
@@ -76,34 +78,34 @@ function ProjectView() {
         <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 pb-4">
-              <h2 className="font-bold text-gray-900">Project Name ({ uploadId })</h2>
+              <h2 className="font-bold text-gray-900">{project.project_name}</h2>
 
               <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${PROJECT_STATUS_MAPPING[project.status].style}`}>
                 {PROJECT_STATUS_MAPPING[project.status].label}
               </span>
             </div>
             <p className="text-sm text-gray-500 mt-1 pb-4">Uploaded at: {formatDateTime(project.uploaded_at)}</p>
-            <p className="text-sm text-gray-500 mt-1 pb-4">Scan duration: {scanTimeInSeconds} seconds</p>
+            <p className="text-sm text-gray-500 mt-1 pb-4">Scan duration: {scanTimeInSeconds}</p>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex items-center justify-between">
+            <div className="bg-red-100 text-red-800 border border-red-400 rounded-xl p-4 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">High Severity</p>
+                <p className="text-xs font-semibold text-red-800 uppercase tracking-wider">High Severity</p>
                 <p className="text-2xl font-bold mt-1">{counts.high}</p>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex items-center justify-between">
+            <div className="bg-amber-100 text-amber-600 border border-amber-400 rounded-xl p-4 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Medium Severity</p>
+                <p className="text-xs font-semibold text-amber-700 uppercase tracking-wider">Medium Severity</p>
                 <p className="text-2xl font-bold mt-1">{counts.medium}</p>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex items-center justify-between">
+            <div className="bg-blue-100 text-blue-700 border border-blue-400 rounded-xl p-4 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Low Severity</p>
+                <p className="text-xs font-semibold text-blue-800 uppercase tracking-wider">Low Severity</p>
                 <p className="text-2xl font-bold mt-1">{counts.low}</p>
               </div>
             </div>
@@ -116,7 +118,11 @@ function ProjectView() {
 
         {project.status === 'PENDING'&& (
           <div className="bg-white px-6 py-4 border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-            Your upload is being processed...
+            <div className="flex items-center justify-center p-6">
+              <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+            </div>
+
+            <p className="text-center animate-pulse">Your upload is being processed...</p>
           </div>
         )}
 
@@ -135,7 +141,7 @@ function Findings({ project }: FindingsProps) {
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50/50">
         <h2 className="text-lg font-semibold text-gray-900">Findings</h2>
-        <span className="text-xs font-medium px-2.5 py-1 bg-gray-200 text-gray-700 rounded-full">3 Findings</span>
+        <span className="text-xs font-medium px-2.5 py-1 bg-gray-200 text-gray-700 rounded-full">{project.checks.length} Findings</span>
       </div>
 
       <div className="overflow-x-auto">

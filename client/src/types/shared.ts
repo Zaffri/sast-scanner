@@ -10,6 +10,7 @@ export type Project = {
   id: number;
   user: number;
   file_name: string;
+  project_name: string;
   original_file_name: string;
   status: 'REJECTED' | 'PENDING' | 'PROCESSED';
   checks: Check[];

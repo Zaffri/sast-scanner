@@ -29,6 +29,7 @@ class Upload(APIView, PageNumberPagination):
     @parser_classes([JSONParser, MultiPartParser, FormParser])
     def post(self, request, pk=None):
         uploaded_zip = request.FILES.get("file_upload")
+        project_name = request.data.get("project_name")
 
         if not uploaded_zip:
             return Response(
@@ -50,6 +51,7 @@ class Upload(APIView, PageNumberPagination):
         file_upload_serializer = FileUploadSerializer(
             data={
                 "file_name": s3_file_name,
+                "project_name": project_name,
                 "original_file_name": original_file_name,
             }
         )

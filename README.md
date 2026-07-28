@@ -11,17 +11,18 @@
 ![](https://img.shields.io/badge/Amazon_S3-569A31?logo=amazons3&logoColor=white)
 
 
-An event-driven pipeline for static application security testing (SAST).
+An event-driven pipeline for static application security testing (SAST). Built to ingest and automatically scan uploaded codebases to provide a security report summary.
 
-![Grafana dashboard showing security insights](./docs/grafana-security-dashboard.png)
-_(Grafana dashboard showing security data: top 5 vulnerabilities found and impact severity spread)_
+![Demo showing DVWA (damn vulnerable web application) being upload and scanned](./docs/demo.gif)
+_(Demo showing DVWA (damn vulnerable web application) being upload and scanned)_
 
 ## Features
 
-* File upload: users can upload their projects in ZIP format which are stored in S3 like storage (Garage). The frontend is currently very simple (see future additions).
+* File upload: users can upload their projects in ZIP format which are stored in S3 like storage (Garage). 
 * Asynchronous scan jobs: workers pick up pending scans from a queue to scan them in the background at their own pace.
 * Security scanning: workers unzip the projects and use Semgrep to identify findings.
 * Persistence and observability: findings are stored in DB. Grafana dashboards are used for simple operation metrics and security insights. Prometheus and Loki are used to forward logs and expose metrics to Grafana.
+* React frontend where users can log in, upload projects/codebases for scanning and see results.
 
 _Note: this project is still in development. The current features are limited, see Future additions/known issues headings below._
 
@@ -86,11 +87,25 @@ Alternatively, you can run watch mode which is beneficial for restarting contain
 docker compose watch
 ```
 
-### Uploading files
+### Using the app
 
-The frontend is extremely simple as it contains a single form for file uplods. You can visit it here: http://localhost:8000
+You can visit the React frontend here: http://localhost:5173/
 
-There is no area in the frontend to see previous uploads or their statuses at the moment. This will be addressed later - see future additons heading below.
+You will be presented with "Your projects" page which simply lists all the projects that you have uploaded. You can view the scan summary/findings by clicking "View".
+
+![Screenshots of "Your projects" page](./docs/frontend-your-projects.png)
+_(Screenshots of "Your projects" page)_
+
+
+To upload a new project simply click "New Project" on the top right hand side. This will take you to an upload form where you can upload your zip for scanning.
+
+![Screenshots of the upload form](./docs/frontend-upload-form.png)
+_(Screenshots of the upload form)_
+
+Scans happen asynchronously in the background so you can feel free to navigate away from the page and get on with your day. Once the scan has complete you will see a breakdown of the issues found, impact and where they were found. Note: line numbers are something I've still got to capture (see todo/future features).
+
+![Screenshots of the scan summary page](./docs/frontend-scan-summary.png)
+_(Screenshots of the scan summary page" page)_
 
 ## Observability
 
@@ -108,6 +123,7 @@ Here are some useful links for debugging in development.
 
 | Component  | Link | Notes |
 | ------------- | ------------- | ------------- |
+| Frontend  | http://localhost:5173/login  | React frontend. Demo login: `user:pass` |
 | Grafana  | http://localhost:3000/  | Contains rabbitmq metrics and security dashboard. Login is `admin:pass` |
 | Prometheus  | http://localhost:9090/targets | Query metrics in prometheus - useful for debugging |
 | RabbitMQ management  | http://localhost:15672 | UI for managing an viewing queues, exchanges etc. Login is `guest:guest` |
@@ -162,17 +178,21 @@ Tasks next in line before i move to `Future additions/known issues`.
 - Add scan project cleanup code
 - Replace console.log with more robust solution (pino logger?)
 - Improve logging with tracing/correlation etc
+- Add code snippet view - click to expand
+- Add false positive/remediation feature?
 - Expand semgrep error handling (semgrep returns errors array) 
 - Improve security checks:
   - Run scan inside secure sandbox rather than worker - need to explore/research this
   - ZIP path traversal
   - Symbolic link concerns?
+  - Add dependencies checks - identify packages with issues e.g. package.json, requirements.txt etc
+  - Add check for identifying any secrets e.g. Gitleaks
 - Expand observability e.g. add average scan times to grafana 
 - Make findings/checks configurable - they are hardcoded
-- Add auth so user's can login and manage their own uploads. Frontend should show pending uploads with status (polling?).
 
 ## Useful resources/docs
 * Django styleguide/conventions: https://github.com/HackSoftware/Django-Styleguide
 * Outbox in django: https://github.com/juntossomosmais/django-outbox-pattern
 * Manually oublish event (as opposed to decorator): https://github.com/juntossomosmais/django-outbox-pattern#publish-message-via-outbox
 * Node RabbitMQ: https://www.rabbitmq.com/tutorials/tutorial-one-javascript
+* Useful projects for testing scanner; [DVWA](https://github.com/digininja/DVWA), [WebGoat](https://owasp.org/www-project-webgoat/), [NodeGoat](https://github.com/owasp/nodegoat), [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/), [OWASP VulnerableApp](https://owasp.org/www-project-vulnerableapp/). 

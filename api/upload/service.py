@@ -22,6 +22,7 @@ def StoreFileReference(data, internal_s3_path, user):
     try:
         new_upload = FileUpload(
             file_name=data["file_name"],
+            project_name=data["project_name"],
             original_file_name=data["original_file_name"],
             s3_path=internal_s3_path,
             user=user,

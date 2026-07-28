@@ -27,6 +27,8 @@ class FileUpload(models.Model):
         "users.User", on_delete=models.CASCADE, related_name="file_uploads"
     )
 
+    project_name = models.CharField(max_length=60, null=False)
+
     def __str__(self):
         return self.file_name
 
