@@ -7,23 +7,6 @@ class ScanCheckSerializer(serializers.ModelSerializer):
         model = ScanCheck
         fields = "__all__"
 
-
-class FileUploadListSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source="user.id")
-
-    class Meta:
-        model = FileUpload
-        fields = [
-            "id",
-            "file_name",
-            "original_file_name",
-            "uploaded_at",
-            "status",
-            "scanned_at",
-            "user",
-        ]
-
-
 class FileUploadSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source="user.id")
     checks = ScanCheckSerializer(many=True, read_only=True)
@@ -33,6 +16,7 @@ class FileUploadSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "file_name",
+            "project_name",
             "original_file_name",
             "uploaded_at",
             "status",

@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router';
 import PageHeader from '../components/PageHeader'
 import { sendApiRequest } from '../service';
 import type { Project } from '../types/shared';
+import ErrorLabel from '../components/ErrorLabel';
 
 function ProjectNew() {
   const navigate = useNavigate();
+  const [error, setError] = useState('');
   const [form, setForm] = useState<{
     file: File | undefined,
     name: string
@@ -16,6 +18,7 @@ function ProjectNew() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    setError('');
 
     if (name === 'file' && e.target.files) {
       const file = e.target.files[0]
@@ -38,19 +41,19 @@ function ProjectNew() {
     e.preventDefault();
 
     if (!form.file || !form.name) {
-      // TODO: show user feedback
-      console.log('Missing form name or file');
+      setError('Please provide a project name and file upload');
       return;
     }
 
     const payload = new FormData();
-    // payload.append('name', form.name); // TODO: add later
+    payload.append('project_name', form.name);
     payload.append('file_upload', form.file)
 
     const response = await sendApiRequest<Project>('/project/', 'POST', payload);
 
     if (response.redirectToLogin) {
       navigate('/login');
+      return;
     }
 
     if ('error' in response) {
@@ -83,7 +86,7 @@ function ProjectNew() {
         </div>
 
         <div>
-          <label htmlFor="file" className="block text-sm font-medium text-gray-700 mb-1">Upload File</label>
+          <label htmlFor="file" className="block text-sm font-medium text-gray-700 mb-1">Upload project (ZIP format)</label>
 
           <input 
             type="file" 
@@ -93,6 +96,8 @@ function ProjectNew() {
             className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
           />
         </div>
+
+        {error && <ErrorLabel message={error} />}
 
         <button 
           type="submit" 

@@ -15,6 +15,7 @@ function ProjectList() {
 
       if (response.redirectToLogin) {
         navigate('/login');
+        return;
       }
 
       if ('error' in response) {
@@ -55,7 +56,7 @@ function ProjectList() {
             <tbody className="divide-y divide-gray-200 text-sm text-gray-700">
               {projects.map((project) => (
                 <tr className="hover:bg-gray-50/50 transition-colors" key={project.id}>
-                  <td className="py-4 px-6 font-medium text-gray-900">Project 1 (TODO)</td>
+                  <td className="py-4 px-6 font-medium text-gray-900">{project.project_name}</td>
                   <td className="py-4 px-6">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${PROJECT_STATUS_MAPPING[project.status].style}`}>
                       {PROJECT_STATUS_MAPPING[project.status].label}
