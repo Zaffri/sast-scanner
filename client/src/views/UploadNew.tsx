@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router';
 import PageHeader from '../components/PageHeader'
 import { sendApiRequest } from '../service';
 
 function UploadNew() {
+  const navigate = useNavigate();
   const [form, setForm] = useState<{
     file: File | undefined,
     name: string
@@ -44,7 +46,7 @@ function UploadNew() {
     // payload.append('name', form.name); // TODO: add later
     payload.append('file_upload', form.file)
 
-    const response = await sendApiRequest('/', 'POST', payload);
+    const response = await sendApiRequest('/', 'POST', navigate, payload);
 
     if ('error' in response) {
       console.log(response);

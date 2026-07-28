@@ -67,39 +67,45 @@ class Upload(APIView):
             file_upload_serializer.errors, status=status.HTTP_400_BAD_REQUEST
         )
 
+class DebugView(APIView):
+    # Open endpoint (auth and permission)
+    permission_classes = ()
+    authentication_classes = ()
 
-def debug(request):
-    storage = PendingBucketStorage()
-    s3_client = storage.connection.meta.client
+    # TODO: turn on only for settings DEBUG (dev)
 
-    try:
-        buckets_response = s3_client.list_buckets()
-        bucket_names = [b["Name"] for b in buckets_response.get("Buckets", [])]
-
-        bucket_contents = {}
-
-        for bucket_name in bucket_names:
-            try:
-                objects_response = s3_client.list_objects_v2(Bucket=bucket_name)
-                object_keys = [
-                    obj["Key"] for obj in objects_response.get("Contents", [])
-                ]
-                bucket_contents[bucket_name] = object_keys
-            except Exception as bucket_err:
-                bucket_contents[bucket_name] = (
-                    f"Error fetching objects: {str(bucket_err)}"
-                )
-
-        return JsonResponse(
-            {
-                "status": "success",
-                "all_buckets": bucket_names,
-                "bucket_contents": bucket_contents,
-            }
-        )
-
-    except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    def get(self, request, *args, **kwargs):
+        storage = PendingBucketStorage()
+        s3_client = storage.connection.meta.client
+    
+        try:
+            buckets_response = s3_client.list_buckets()
+            bucket_names = [b["Name"] for b in buckets_response.get("Buckets", [])]
+    
+            bucket_contents = {}
+    
+            for bucket_name in bucket_names:
+                try:
+                    objects_response = s3_client.list_objects_v2(Bucket=bucket_name)
+                    object_keys = [
+                        obj["Key"] for obj in objects_response.get("Contents", [])
+                    ]
+                    bucket_contents[bucket_name] = object_keys
+                except Exception as bucket_err:
+                    bucket_contents[bucket_name] = (
+                        f"Error fetching objects: {str(bucket_err)}"
+                    )
+    
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "all_buckets": bucket_names,
+                    "bucket_contents": bucket_contents,
+                }
+            )
+    
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
 
 class UploadInternal(APIView):
