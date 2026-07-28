@@ -5,7 +5,6 @@
 ![](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white)
 ![](https://img.shields.io/badge/RabbitMQ-FF6600?logo=rabbitmq&logoColor=white)
 ![](https://img.shields.io/badge/SQLite-003B57?logo=sqlite&logoColor=white)
-![](https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=white)
 ![](https://img.shields.io/badge/Grafana_Loki-F46800?logo=grafana&logoColor=white)
 ![](https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=white)
 ![](https://img.shields.io/badge/Amazon_S3-569A31?logo=amazons3&logoColor=white)
